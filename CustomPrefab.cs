@@ -46,4 +46,8 @@ public class CustomPrefab {
             } else if (dataLines[dataPointer].StartsWith("position:")) {
                 string vec3Position = dataLines[dataPointer].Substring(dataLines[dataPointer].IndexOf(":") + 1);
                 string[] posComponents = vec3Position.Split(',');
-                go.transform position
+                go.transform.position = new Vector3(float.Parse(posComponents[0]), float.Parse(posComponents[1]);
+                dataPointer++;
+                continue;
+                                                 
+                                                    
