@@ -30,3 +30,20 @@ public class CustomPrefab {
                 dataPointer++;
                 //Unity uses C# reflection and allows us to simply pass the string name of the script we want to
                 CustomComponentBase c = go.AddComponent(componentName) as CustomComponentBase;
+                
+                //This is similar to calling go.AddComponent("ComponentA");
+                while(dataLines[dataPointer].Length < 1) {
+                    dataPointer++;//Clear any white space after the component token
+                }
+                
+                if(c !=null){
+                    //Special components should implement the ComponentType class
+                    //Pass the dataPointer as a (ref) to continue with any modifications
+                    c.SetData(dataLines, ref dataPointer);
+                } else {
+                    Debug.Log("Error adding" + componentName + "! Ensure the name is typed correctly.");
+                }
+            } else if (dataLines[dataPointer].StartsWith("position:")) {
+                string vec3Position = dataLines[dataPointer].Substring(dataLines[dataPointer].IndexOf(":") + 1);
+                string[] posComponents = vec3Position.Split(',');
+                go.transform position
