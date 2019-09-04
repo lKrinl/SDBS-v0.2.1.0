@@ -49,5 +49,17 @@ public class CustomPrefab {
                 go.transform.position = new Vector3(float.Parse(posComponents[0]), float.Parse(posComponents[1]);
                 dataPointer++;
                 continue;
+            //else if (other keywords?) {
+                //other processing
+            //}
+            } else {
+                Debug.Log("Line: `" + dataLines[dataPointer] + "` not recognized as a valid token.");
+                dataPointer++;
+                continue;
+            }
+    }
+    dataPointer = 0;
+    return go;
+}
                                                  
                                                     
