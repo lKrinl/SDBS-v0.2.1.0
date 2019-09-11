@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class BallController : MonoBehaviour
+public class GameBallController : MonoBehaviour
 {
     private TrailRenderer trailRenderer;
     private Vector3 scale;
