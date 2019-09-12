@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
 /// Interface for using Abilities for use by Player & AI.
 /// Applies damage & influence using stat component.
-/// </summary>
 [RequireComponent(typeof(AgentStats))]
 public class AbilityComponent : MonoBehaviour {
 
@@ -22,10 +20,6 @@ public class AbilityComponent : MonoBehaviour {
 
     private Transform currentTarget;
     private Enemy targetEnemy;
-
-    [Header("Ability Cooldown")]
-    public float globalCooldown = 1f;   //Standard cooldown - to prevent too many abil uses, going to use "Stamina" from stat system
-    private float globalCooldownFinishTime; //Used to track global cooldown
 
     [Header("AoE Ability Related")]
     public Transform aimingDisc;
@@ -58,27 +52,6 @@ public class AbilityComponent : MonoBehaviour {
     [Tooltip("Adds onto an existing 5s CD")] public float additionalHealCooldown;
     private float healFinishTime;
     private float healFXTime = -1f;    //Time before heal after pressed: -1f BECAUSE EFFECT TIME IS INACCURATE - THIS IS TO SYNC THE FX WITH HEALTH INCREASE
-
-    public float GetCurrentCooldown(Abilities abil)
-    {
-        if (GameMetaInfo._Is_Instant_Ability(abil))
-        {
-            if (SelectedAbility == Abilities.Confuse) return confuseFinishTime - Time.time;
-            else
-            {
-                return globalCooldownFinishTime - Time.time;
-            }
-        }
-        else if (GameMetaInfo._Is_Defense_Ability(abil))
-        {
-            return healFinishTime - Time.time;
-        }
-        else if (GameMetaInfo._Is_AoE_Ability(abil))
-        {
-            return aoeFinishTime - Time.time;
-        }
-        return 0f;
-    }
 
     private void Awake()
     {
