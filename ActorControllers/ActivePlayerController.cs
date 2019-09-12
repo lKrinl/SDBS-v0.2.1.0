@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace ActivePlayerController
 {
-    [RequireComponent(typeof(ActivePlayerController))]
+    [RequireComponent(typeof(ActorController))]
     public class ActiveCharacterController : MonoBehaviour
     {
         [SerializeField] private ActiveCharacterControllerMovementSettings m_MovementSettings = null;
