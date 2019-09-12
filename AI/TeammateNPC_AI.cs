@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Your_NPC_AI : CoreAI
+public class TeammateNPC_AI : CoreAI
 {
     protected void Start()
     {
@@ -13,6 +13,6 @@ public class Your_NPC_AI : CoreAI
     // Update is called once per frame
     void Update()
     {
-        // insert your own code here
+        // to-do
     }
 }
