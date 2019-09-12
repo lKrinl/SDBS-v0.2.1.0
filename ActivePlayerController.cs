@@ -30,9 +30,6 @@ namespace ActivePlayerController
             m_ActiveCharacterController = GetComponent<ActiveCharacterController>();
         }
 
-        /// <summary>
-        /// Drives the <see cref="CharacterController" /> using the given input values.
-        /// </summary>
         /// <param name="x">The horizontal input value.</param>
         /// <param name="z">The vertical input value.</param>
         /// <param name="sprint">The sprinting input value.</param>
