@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour {
-
-    public GameObject hitSparkPrefab;
+public class ActivePlayer : MonoBehaviour {
 
     protected bool canFlinch = true;
 
@@ -39,7 +37,7 @@ public class Player : MonoBehaviour {
 
     public AudioSource audioSource;
 
-    protected PlayerCollider playerCollider;
+    protected ActivePlayerCollider activeplayerCollider;
 
     protected virtual void Start()
     {
@@ -47,8 +45,8 @@ public class Player : MonoBehaviour {
         isAlive = true;
         baseAnim.SetBool("IsAlive", isAlive);
 
-        playerCollider = GetComponent<PlayerCollider>();
-        playerCollider.SetColliderStance(true);
+        activeplayerCollider = GetComponent<ActivePlayerCollider>();
+        activeplayerCollider.SetColliderStance(true);
     }
 
     public virtual void Update()
@@ -61,7 +59,7 @@ public class Player : MonoBehaviour {
 
     protected virtual void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.name == "Floor")
+        if (collision.collider.name == "Court")
         {
             isGrounded = true;
             baseAnim.SetBool("IsGrounded", isGrounded);
@@ -71,7 +69,7 @@ public class Player : MonoBehaviour {
 
     protected virtual void OnCollisionExit(Collision collision)
     {
-        if (collision.collider.name == "Floor")
+        if (collision.collider.name == "Court")
         {
             isGrounded = false;
             baseAnim.SetBool("IsGrounded", isGrounded);
@@ -85,23 +83,24 @@ public class Player : MonoBehaviour {
 
     public virtual void Attack()
     {
+        ///To do: (if(ballEquipped)) & Input Key for attack///
         baseAnim.SetTrigger("Attack");
     }
 
     public virtual void DidHitObject(Collider collider, Vector3 hitPoint, Vector3 hitVector)
     {
-        Player player = collider.GetComponent<Player>();
-        if (isAlive && !isKnockedOut && player != null && player.CanBeHit() && collider.tag != gameObject.tag)
+        EnemyPlayer enemyplayer = collider.GetComponent<Player>();
+        if (isAlive && !isKnockedOut && enemyplayer != null && enemyplayer.CanBeHit() && collider.tag != gameObject.tag)
         {
             if (collider.attachedRigidbody != null)
-                HitPlayer(player, hitPoint, hitVector);
+                HitEnemyPlayer(enemyplayer, hitPoint, hitVector);
         }
     }
 
-    protected virtual void HitPlayer(Player player, Vector3 hitPoint, Vector3 hitVector)
+    protected virtual void HitEnemyPlayer(EnemyPlayer enemyplayer, Vector3 hitPoint, Vector3 hitVector)
     {
         //Debug.Log(gameObject.name + " HIT " + actor.gameObject.name);
-        player.EvaluateAttackData(normalAttack, hitVector, hitPoint);
+        enemyplayer.EvaluateAttackData(normalAttack, hitVector, hitPoint);
         PlaySFX(hitClip);
     }
 
@@ -127,7 +126,7 @@ public class Player : MonoBehaviour {
         Color color = baseSprite.color;
         if (currentHP < 0)
             color.a = 0.75f;
-        lifeBar.SetThumbnail(playerThumbnail, color);
+        lifeBar.SetThumbnail(activeplayerThumbnail, color);
     }
 
     protected virtual void Die()
@@ -140,7 +139,7 @@ public class Player : MonoBehaviour {
         baseAnim.SetBool("IsAlive", isAlive);
         StartCoroutine(DeathFlicker());
         PlaySFX(deathClip);
-        playerCollider.SetColliderStance(false);
+        activeplayerCollider.SetColliderStance(false);
     }
 
     private IEnumerator DeathFlicker()
@@ -196,23 +195,15 @@ public class Player : MonoBehaviour {
 
     protected void ShowHitEffects(float value, Vector3 position)
     {
-        GameObject sparkObj = Instantiate(hitSparkPrefab);
-        sparkObj.transform.position = position;
+        ///To do: dmgOBJ prefab script///
+        GameObject dmgObj = Instantiate(hitDMGPrefab);
+        dmgObj.transform.position = position;
 
         //Creates a new instance of the hitValuePrefab and sets its text to the amount of
         //damage taken. After one second, it triggers the DestroyTimer script.
         GameObject obj = Instantiate(hitValuePrefab);
         obj.GetComponent<Text>().text = value.ToString();
         obj.GetComponent<DestroyTimer>().EnableTimer(1.0f);
-
-        //Finds WorldCanvas by looking for the object tagged with the WorldCanvas tag. Then
-        //it becomes the child of the damage value GameObject.Lastly, the damage value is
-        //positioned in the place of the hit.
-        GameObject canvas = GameObject.FindGameObjectWithTag("WorldCanvas");
-        obj.transform.SetParent(canvas.transform);
-        obj.transform.localRotation = Quaternion.identity;
-        obj.transform.localScale = Vector3.one;
-        obj.transform.position = position;
     }
 
     public void PlaySFX(AudioClip clip)
