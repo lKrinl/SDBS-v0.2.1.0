@@ -2,10 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// Inheritance is equivalent to interactableNPC. e.g.:  Targetable <- InteractableNPC <- (StoryNPCS) || Targetable <- Enemy <- (EnemyNPCs)
-/// An enemy is going to be ANYTHING you can attack. As well as enemy NPCs, it may be animals, etc...
-/// </summary>
+/// e.g.:  Targetable <- InteractableNPC <- (StoryNPCS) || Targetable <- Enemy <- (EnemyNPCs)
 public class Enemy : Targetable {
 
     protected static GameObject player;
@@ -50,7 +47,7 @@ public class Enemy : Targetable {
     }
 
     /// <summary>
-    /// Influences the enemy towards the specified emotion. 
+    /// To do; Experimental AI Behaviour that influences enemy actions towards the specified emotion. 
     /// </summary>
     public void Influence(Emotion intent, float amount)
     {
