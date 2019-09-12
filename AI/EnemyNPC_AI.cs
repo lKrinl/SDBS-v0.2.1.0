@@ -8,22 +8,18 @@ public class Enemy : Targetable {
     protected static GameObject player;
     protected static Difficulty gameDifficulty;
 
-    protected EnemySpawnPoint home;
-
     public GameObject deathEffect;
 
     public Transform target;
     
     //Components
-    [HideInInspector] public EmotionChip emotionChip;
     [HideInInspector] public NavMeshAgent navAgent;
     [HideInInspector] public AbilityComponent abilityComponent;
     [HideInInspector] public Rigidbody rBody;
     [HideInInspector] public AgentStats stats;
-    [HideInInspector] public NeighbourhoodTracker neighbourhoodTracker;
 
     //Properties
-    public EnemySpawnPoint Spawn
+    public EnemyFieldSpawnPoint Spawn
     {
         get { return home; }
         set { home = value; transform.SetParent(value.transform); }
@@ -32,36 +28,12 @@ public class Enemy : Targetable {
     public Vector3 Velocity { get { return navAgent.velocity; } set { navAgent.velocity = value; } }
     public float SightRange { get { return neighbourhoodTracker.TrackingRadius; } }
 
-    // -- Interface -- //
-    public void Enrage()
-    {
-        emotionChip.enraged = true; 
-    }
-
-    /// <summary>
-    /// Influence the enemy. The caller will be recorded as the influencer if the agent's emotion changes as a result of this method call.
-    /// </summary>
-    public void Influence(GameObject influencer, Emotion intent, float amount)
-    {
-        emotionChip.Influence(influencer, intent, amount);
-    }
-
-    /// <summary>
-    /// To do; Experimental AI Behaviour that influences enemy actions towards the specified emotion. 
-    /// </summary>
-    public void Influence(Emotion intent, float amount)
-    {
-        emotionChip.Influence(null, intent, amount);
-    }
-
     protected void Awake()  //Object initialised
     {
-        emotionChip = GetComponent<EmotionChip>();
         navAgent = GetComponent<NavMeshAgent>();
         abilityComponent = GetComponent<AbilityComponent>();
         rBody = GetComponent<Rigidbody>();
         stats = GetComponent<AgentStats>();
-        neighbourhoodTracker = GetComponent<NeighbourhoodTracker>();
     }
 
     //References & Event subscriptions
@@ -80,11 +52,6 @@ public class Enemy : Targetable {
         Spawn.RemoveEnemy(this);
         //Event Removals
         stats.onDeath -= Die;
-    }
-
-    protected void FixedUpdate()
-    {
-        emotionChip.Execute(this);
     }
 
     private void Die()
@@ -150,21 +117,6 @@ public class Enemy : Targetable {
         MoveTo(patrolPos);
     }
 
-    public Vector3 RandomNavMeshPoint(float sightRange)
-    {
-        Vector3 random = UnityEngine.Random.insideUnitSphere * sightRange;
-        random += Position;
-
-        NavMeshHit hit;
-        Vector3 finalPos = Vector3.zero;
-
-        if (NavMesh.SamplePosition(random, out hit, sightRange, 1))
-        {
-            finalPos = hit.position;
-        }
-        return finalPos;
-    }
-
     private void FaceTarget(Vector3 target)
     {
         Vector3 direction = target - Position;
@@ -176,26 +128,13 @@ public class Enemy : Targetable {
         }
     }
 
-    public bool DestinationReached()
-    {
-        if(navAgent != null)
-        {
-            return (navAgent.destination - transform.position).sqrMagnitude <= (navAgent.stoppingDistance * navAgent.stoppingDistance); //multiply better performance than sqrRoot
-        }
-        else
-        {
-            return (target.position - Position).sqrMagnitude <= transform.localScale.sqrMagnitude;
-        }
-    }
-
     public bool CanSeeTarget(Transform target)
     {
         Ray ray = new Ray(Position, (target.position - Position));
         RaycastHit hit;
-        //Racyast everything except default & affectable objects
 
-        //Player raycast - disregard layers
-        if (target.tag.Equals("Player"))
+        //Ball raycast - disregard layers
+        if (target.tag.Equals("Ball"))
         {
             if (Physics.Raycast(ray, out hit, SightRange, LayerMask.GetMask("Default", GameMetaInfo._LAYER_IMMOVABLE_OBJECT), QueryTriggerInteraction.Ignore))
             {
@@ -209,7 +148,7 @@ public class Enemy : Targetable {
                 }
             }
         }
-        else //Target other objects - change layer mask
+        else //Target other actors - change layer mask
         {
             if (Physics.Raycast(ray, out hit, SightRange, LayerMask.GetMask(GameMetaInfo._LAYER_AFFECTABLE_OBJECT), QueryTriggerInteraction.Ignore))
             {
