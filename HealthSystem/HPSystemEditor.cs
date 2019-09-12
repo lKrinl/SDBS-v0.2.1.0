@@ -5,7 +5,7 @@ namespace UniCraft.HPMechanism.Editor
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(HealthSystem))]
-    public class HealthSystemEditor : UnityEditor.Editor
+    public class HPSystemEditor : UnityEditor.Editor
     {
 		////////// Attribute //////////
 
@@ -20,10 +20,10 @@ namespace UniCraft.HPMechanism.Editor
 		private const float SpaceBetweenField = 6f;
 		
 		////////// Serialized property //////////
-		private SerializedProperty _health;
-		private SerializedProperty _maxHealth;
+		private SerializedProperty _hp;
+		private SerializedProperty _maxHP;
 		private SerializedProperty _onTakeDamageEvents;
-	    private SerializedProperty _onRecoverHealthEvents;
+	    private SerializedProperty _onRecoverHPEvents;
 	    private SerializedProperty _onDeathEvents;
 	    private SerializedProperty _onResurrectionEvents;
 
@@ -33,10 +33,10 @@ namespace UniCraft.HPMechanism.Editor
 		
 		private void OnEnable()
 		{
-			_health = serializedObject.FindProperty("Health");
-			_maxHealth = serializedObject.FindProperty("MaxHealth");
+			_hp = serializedObject.FindProperty("HP");
+			_maxHP = serializedObject.FindProperty("MaxHP");
 			_onTakeDamageEvents = serializedObject.FindProperty("OnTakeDamageEvents");
-			_onRecoverHealthEvents = serializedObject.FindProperty("OnRecoverHealthEvents");
+			_onRecoverHPEvents = serializedObject.FindProperty("OnRecoverHPEvents");
 			_onDeathEvents = serializedObject.FindProperty("OnDeathEvents");
 			_onResurrectionEvents = serializedObject.FindProperty("OnResurrectionEvents");
 		}
@@ -54,14 +54,14 @@ namespace UniCraft.HPMechanism.Editor
 
 	    private void DrawInformation()
 	    {
-		    if ( _maxHealth.intValue < _health.intValue )
+		    if ( _maxHP.intValue < _hp.intValue )
 		    {
-			    _health.intValue = _maxHealth.intValue;
+			    _hp.intValue = _maxHP.intValue;
 		    }
 		    GUILayout.Space(SpaceBetweenField);
 		    EditorGUILayout.LabelField(InformationTitle, EditorStyles.boldLabel);
-		    EditorGUILayout.IntSlider(_maxHealth, HealthSystem.DeathHealth, HealthSystem.MaxHealthLimit);
-		    EditorGUILayout.IntSlider(_health, HealthSystem.DeathHealth, HealthSystem.MaxHealthLimit);
+		    EditorGUILayout.IntSlider(_maxHP, HealthSystem.DeathHP, HPSystem.MaxHPLimit);
+		    EditorGUILayout.IntSlider(_hp, HPSystem.DeathHP, HPSystem.MaxHPLimit);
 	    }
 
 	    private void DrawDamageEvent()
@@ -69,7 +69,7 @@ namespace UniCraft.HPMechanism.Editor
 		    GUILayout.Space(SpaceBetweenField);
 		    EditorGUILayout.LabelField(DamageEventTitle, EditorStyles.boldLabel);
 		    EditorGUILayout.PropertyField(_onTakeDamageEvents, true);
-		    EditorGUILayout.PropertyField(_onRecoverHealthEvents, true);
+		    EditorGUILayout.PropertyField(_onRecoverHPEvents, true);
 	    }
 
 	    private void DrawLifeEvent()
