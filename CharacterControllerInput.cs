@@ -2,31 +2,24 @@ using UnityEngine;
 
 namespace ThirdPersonController
 {
-    /// <summary>
-    /// Drives the <see cref="CharacterMotor" /> using user input values.
-    /// </summary>
-    [RequireComponent(typeof(CharacterMotor))]
-    public class CharacterMotorInput : MonoBehaviour
+    [RequireComponent(typeof(CharacterController))]
+    public class CharacterControllerInput : MonoBehaviour
     {
-        [SerializeField] private CharacterMotorInputSettings m_InputSettings = null;
+        [SerializeField] private CharacterControllerInputSettings m_InputSettings = null;
 
-        private CharacterMotor m_CharacterMotor;
+        private CharacterController m_CharacterController;
         private Vector3 m_MovementInput;
         private bool m_CrouchInput;
         private bool m_SprintInput;
         private bool m_JumpInput;
 
-        /// <summary>
         /// Awake is called when the script instance is being loaded.
-        /// </summary>
         protected virtual void Awake()
         {
-            m_CharacterMotor = GetComponent<CharacterMotor>();
+            m_CharacterController = GetComponent<CharacterController>();
         }
 
-        /// <summary>
         /// Update is called every frame, if the MonoBehaviour is enabled.
-        /// </summary>
         protected virtual void Update()
         {
             m_MovementInput = new Vector3(
@@ -44,12 +37,10 @@ namespace ThirdPersonController
             }
         }
 
-        /// <summary>
         /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
-        /// </summary>
         protected virtual void FixedUpdate()
         {
-            m_CharacterMotor.Move(m_MovementInput.x, m_MovementInput.z, m_SprintInput, m_CrouchInput, m_JumpInput);
+            m_CharacterController.Move(m_MovementInput.x, m_MovementInput.z, m_SprintInput, m_CrouchInput, m_JumpInput);
             m_JumpInput = false;
         }
     }
