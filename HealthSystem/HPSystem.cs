@@ -8,29 +8,29 @@ namespace UniCraft.HealthMechanism
     /// </summary>
     [AddComponentMenu("UniCraft/HealthSystem")]
     [DisallowMultipleComponent]
-    public class HealthSystem : MonoBehaviour
+    public class HPSystem : MonoBehaviour
     {
         ////////// Attribute //////////
         
         //Default Setting//
-        public const int DeathHealth = 0;
-        public const int MaxHealthLimit = 999;
+        public const int DeathHP = 0;
+        public const int MaxHPLimit = 999;
         
         //Information//
-        [SerializeField] protected int MaxHealth = 100;
-        [SerializeField] protected int Health = 80;
+        [SerializeField] protected int MaxHP = 100;
+        [SerializeField] protected int HP = 80;
         
         //Unity Event//
         [SerializeField] protected UnityEvent OnTakeDamageEvents = null;
-        [SerializeField] protected UnityEvent OnRecoverHealthEvents = null;
+        [SerializeField] protected UnityEvent OnRecoverHPEvents = null;
         
         [SerializeField] protected UnityEvent OnDeathEvents = null;
         [SerializeField] protected UnityEvent OnResurrectionEvents = null;
 
         //Property//
-        public int GetHealth => Health;
-        public int GetMaxHealth => MaxHealth;
-        public bool IsDead => (Health == DeathHealth);
+        public int GetHP => HP;
+        public int GetMaxHP => MaxHP;
+        public bool IsDead => (HP == DeathHP);
         
         ////////// Method //////////
 
@@ -40,8 +40,8 @@ namespace UniCraft.HealthMechanism
         
         public virtual void TakeDamage(int damage)
         {
-            Health = Mathf.Clamp(Health - damage, DeathHealth, MaxHealth);
-            if ( Health == DeathHealth )
+            HP = Mathf.Clamp(HP - damage, DeathHP, MaxHP);
+            if ( HP == DeathHP )
             {
                 Die();
             }
@@ -51,10 +51,10 @@ namespace UniCraft.HealthMechanism
             }
         }
 
-        public virtual void RecoverHealth(int heal)
+        public virtual void RecoverHP(int heal)
         {
-            Health = Mathf.Clamp(Health + heal, DeathHealth, MaxHealth);
-            OnRecoverHealthEvents.Invoke();
+            HP = Mathf.Clamp(HP + heal, DeathHP, MaxHP);
+            OnRecoverHPEvents.Invoke();
         }
         
         //Life//
@@ -66,7 +66,7 @@ namespace UniCraft.HealthMechanism
 
         public virtual void Resuscitate(int heal)
         {
-            Health = Mathf.Clamp(Health + heal, DeathHealth, MaxHealth);
+            HP = Mathf.Clamp(HP + heal, DeathHP, MaxHP);
             OnResurrectionEvents.Invoke();
         }
     }
