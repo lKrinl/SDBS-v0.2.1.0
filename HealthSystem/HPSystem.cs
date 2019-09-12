@@ -3,9 +3,7 @@ using UnityEngine.Events;
 
 namespace UniCraft.HealthMechanism
 {
-    /// <summary>
     /// Module to replicate the health behaviour
-    /// </summary>
     [AddComponentMenu("UniCraft/HealthSystem")]
     [DisallowMultipleComponent]
     public class HPSystem : MonoBehaviour
