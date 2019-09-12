@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class GameBallController : MonoBehaviour
+public class BallController : MonoBehaviour
 {
     private TrailRenderer trailRenderer;
     private Vector3 scale;
@@ -15,9 +15,6 @@ public class GameBallController : MonoBehaviour
     System.Random rnd = new System.Random();
     void Start()
     {
-        trailRenderer = GameObject.Find("Trail").GetComponent<TrailRenderer>();
-        trailRenderer.endColor = Color.white;
-        trailRenderer.startColor = blueTrailColor;
         GameState.ballStartingPosition = transform.position;
         GameState.ballPosition = GameState.ballStartingPosition;
         scale = transform.localScale;
