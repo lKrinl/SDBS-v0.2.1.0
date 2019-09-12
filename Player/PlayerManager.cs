@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Actor : MonoBehaviour {
+public class Player : MonoBehaviour {
 
     public GameObject hitSparkPrefab;
 
@@ -11,8 +11,6 @@ public class Actor : MonoBehaviour {
 
     public Animator baseAnim;
     public Rigidbody body;
-    public SpriteRenderer shadowSprite;
-    public SpriteRenderer baseSprite;
 
     public float speed = 2;
     protected Vector3 frontVector;
@@ -20,8 +18,8 @@ public class Actor : MonoBehaviour {
     public bool isGrounded;
     public bool isAlive = true;
 
-    public float maxLife = 100.0f;
-    public float currentLife = 100.0f;
+    public float maxHP = 100.0f;
+    public float currentHP = 100.0f;
 
     //holds attack info. class declaration at bottom
     public AttackData normalAttack;
@@ -32,7 +30,7 @@ public class Actor : MonoBehaviour {
 
     //variables for health bar
     public LifeBar lifeBar;
-    public Sprite actorThumbnail;
+    public Sprite playerThumbnail;
 
     public GameObject hitValuePrefab;
 
@@ -41,24 +39,24 @@ public class Actor : MonoBehaviour {
 
     public AudioSource audioSource;
 
-    protected ActorCollider actorCollider;
+    protected PlayerCollider playerCollider;
 
     protected virtual void Start()
     {
-        currentLife = maxLife;
+        currentHP = maxHP;
         isAlive = true;
         baseAnim.SetBool("IsAlive", isAlive);
 
-        actorCollider = GetComponent<ActorCollider>();
-        actorCollider.SetColliderStance(true);
+        playerCollider = GetComponent<PlayerCollider>();
+        playerCollider.SetColliderStance(true);
     }
 
     public virtual void Update()
     {
         //keeps shadow grounded
-        Vector3 shadowSpritePosition = shadowSprite.transform.position;
-        shadowSpritePosition.y = 0;
-        shadowSprite.transform.position = shadowSpritePosition;
+        Vector3 shadowPosition = shadow.transform.position;
+        shadowPosition.y = 0;
+        shadow.transform.position = shadowPosition;
     }
 
     protected virtual void OnCollisionEnter(Collision collision)
@@ -85,20 +83,6 @@ public class Actor : MonoBehaviour {
 
     }
 
-    public void FlipSprite(bool isFacingLeft)
-    {
-        if (isFacingLeft)
-        {
-            frontVector = new Vector3(-1, 0, 0);
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
-        else
-        {
-            frontVector = new Vector3(1, 0, 0);
-            transform.localScale = new Vector3(1, 1, 1);
-        }
-    }
-
     public virtual void Attack()
     {
         baseAnim.SetTrigger("Attack");
@@ -106,26 +90,23 @@ public class Actor : MonoBehaviour {
 
     public virtual void DidHitObject(Collider collider, Vector3 hitPoint, Vector3 hitVector)
     {
-        Actor actor = collider.GetComponent<Actor>();
-        if (isAlive && !isKnockedOut && actor != null && actor.CanBeHit() && collider.tag != gameObject.tag)
+        Player player = collider.GetComponent<Player>();
+        if (isAlive && !isKnockedOut && player != null && player.CanBeHit() && collider.tag != gameObject.tag)
         {
             if (collider.attachedRigidbody != null)
-                HitActor(actor, hitPoint, hitVector);
+                HitPlayer(player, hitPoint, hitVector);
         }
     }
 
-    protected virtual void HitActor(Actor actor, Vector3 hitPoint, Vector3 hitVector)
+    protected virtual void HitPlayer(Player player, Vector3 hitPoint, Vector3 hitVector)
     {
         //Debug.Log(gameObject.name + " HIT " + actor.gameObject.name);
-        actor.EvaluateAttackData(normalAttack, hitVector, hitPoint);
+        player.EvaluateAttackData(normalAttack, hitVector, hitPoint);
         PlaySFX(hitClip);
     }
 
     public virtual void TakeDamage(float value, Vector3 hitVector, bool knockdown = false)
     {
-        FlipSprite(hitVector.x > 0);
-        currentLife -= value;
-
         if (isAlive && currentLife <= 0)
             Die();
         else if (knockdown)
@@ -138,15 +119,15 @@ public class Actor : MonoBehaviour {
             }
         }
         else if (canFlinch)
-            baseAnim.SetTrigger("IsHurt");
+            baseAnim.SetTrigger("IsStunned");
 
         //update lifebar
         lifeBar.EnableLifeBar(true);
-        lifeBar.SetProgress(currentLife / maxLife);
+        lifeBar.SetProgress(currentHP / maxHP);
         Color color = baseSprite.color;
-        if (currentLife < 0)
+        if (currentHP < 0)
             color.a = 0.75f;
-        lifeBar.SetThumbnail(actorThumbnail, color);
+        lifeBar.SetThumbnail(playerThumbnail, color);
     }
 
     protected virtual void Die()
@@ -159,27 +140,13 @@ public class Actor : MonoBehaviour {
         baseAnim.SetBool("IsAlive", isAlive);
         StartCoroutine(DeathFlicker());
         PlaySFX(deathClip);
-        actorCollider.SetColliderStance(false);
-    }
-
-    protected virtual void SetOpacity(float value)
-    {
-        Color color = baseSprite.color;
-        color.a = value;
-        baseSprite.color = color;
+        playerCollider.SetColliderStance(false);
     }
 
     private IEnumerator DeathFlicker()
     {
         int i = 5;
         while (i > 0)
-        {
-            SetOpacity(0.5f);
-            yield return new WaitForSeconds(0.1f);
-            SetOpacity(1.0f);
-            yield return new WaitForSeconds(0.1f);
-            i--;
-        }
         if (gameObject != null)
             Destroy(gameObject, 0.1f);
     }
