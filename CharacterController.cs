@@ -7,10 +7,10 @@ namespace ThirdPersonController
     /// Allows for basic character movement physics and actions.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class CharacterMotor : MonoBehaviour
+    public class CharacterController : MonoBehaviour
     {
-        [SerializeField] private CharacterMotorMovementSettings m_MovementSettings = null;
-        [SerializeField] private CharacterMotorPhysicsSettings m_PhysicsSettings = null;
+        [SerializeField] private CharacterControllerMovementSettings m_MovementSettings = null;
+        [SerializeField] private CharacterControllerPhysicsSettings m_PhysicsSettings = null;
 
         private CharacterController m_CharacterController;
         private Vector3 m_Motion;
